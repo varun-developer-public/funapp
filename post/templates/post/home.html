@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FunApp - Feed{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'post/styles.css' %}">
+    <link rel="icon" href="{% static 'post/images/default-avatar.svg' %}" type="image/svg+xml">
+</head>
+<body>
+    <header class="app-header">
+        <div class="container header-flex">
+            <h1 class="logo"><a href="{% url 'home_feed' %}">FunApp</a></h1>
+            
+            <nav>
+                {% if user.is_authenticated %}
+                    <span class="welcome-text">👋 Hi, {{ user.username }}</span>
+                    <a href="{% url 'create_post' %}" class="new-post-btn">➕ New Post</a>
+                    <a href="{% url 'logout' %}" class="auth-btn">🚪 Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="auth-btn">🔑 Login</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+   <main class="container feed-container">
+    {% block content %}
+    
+    {% if posts %}
+        {% for post in posts %}
+        <article class="post-card" data-post-id="{{ post.id }}">
+            <div class="post-header">
+                <img src="{% static 'post/images/default-avatar.svg' %}" alt="Avatar" class="user-avatar">
+                <div class="user-info">
+                    <h2>{{ post.author.username|default:"Anonymous" }}</h2>
+                    <time>{{ post.created_at|timesince }} ago</time>
+                </div>
+                {% if user.is_authenticated and user == post.author %}
+                <div class="post-actions-top">
+                    <button class="delete-btn" data-post-id="{{ post.id }}" title="Delete post">🗑️</button>
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if post.photo %}
+                <img src="{{ post.photo.url }}" alt="Post image" class="post-image">
+            {% else %}
+                <img src="{% static 'post/images/default-post.svg' %}" alt="Post image" class="post-image">
+            {% endif %}
+            
+            <div class="post-actions">
+                <button class="like-btn {% if user.is_authenticated and user in post.likes.all %}liked{% endif %}" data-post-id="{{ post.id }}">
+                    ❤️ <span class="like-count">{{ post.likes.count }}</span>
+                </button>
+                <button class="comment-btn">💬 <span>Comment</span></button>
+                <button class="share-btn">↪️ <span>Share</span></button>
+            </div>
+            
+            <div class="post-caption">{{ post.caption }}</div>
+            
+            <div class="comments-section" id="comments-{{ post.id }}">
+                <h3>Comments</h3>
+                {% for comment in post.comment_set.all|slice:":3" %}
+                <div class="comment">
+                    <img src="{% static 'post/images/default-avatar.svg' %}" alt="Avatar" class="comment-avatar">
+                    <div class="comment-content">
+                        <strong>{{ comment.user.username|default:"Anonymous" }}</strong>
+                        <p>{{ comment.text }}</p>
+                        <small>{{ comment.created_at|timesince }} ago</small>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="no-comments">No comments yet. Be the first to comment!</p>
+                {% endfor %}
+    
+                <form class="comment-form" data-post-id="{{ post.id }}">
+                    {% csrf_token %}
+                    <input type="text" name="text" placeholder="Add a comment..." required>
+                    <button type="submit">Post</button>
+                </form>
+            </div>
+        </article>
+        {% endfor %}
+    {% else %}
+        <div class="empty-feed">
+            <img src="{% static 'post/images/default-post.svg' %}" alt="Empty feed" width="200">
+            <p>🚀 No posts yet. Be the first to share something!</p>
+        </div>
+    {% endif %}
+
+    {% endblock %}
+</main>
+
+    <script src="{% static 'post/app.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+{% extends "post/home.html" %}
+{% load static %}
+
+{% block title %}FunApp - Create Post{% endblock %}
+
+{% block content %}
+<article class="post-card">
+  <div class="post-header">
+    <img src="{% static 'post/images/default-avatar.svg' %}" alt="Avatar" class="user-avatar">
+    <div class="user-info">
+      <h2>{{ user.username }}</h2>
+      <time>Create a new post</time>
+    </div>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" class="comment-post-form">
+    {% csrf_token %}
+
+    <!-- Photo Upload -->
+    <div class="form-group">
+      <label for="{{ form.photo.id_for_label }}">Upload Photo:</label>
+      <div class="upload-preview">
+        <img src="{% static 'post/images/default-post.svg' %}" alt="Upload preview" id="upload-preview-img">
+      </div>
+      {{ form.photo }}
+      {% if form.photo.errors %}
+        <div class="text-danger">{{ form.photo.errors }}</div>
+      {% endif %}
+    </div>
+
+    <!-- Caption -->
+    <div class="form-group">
+      <label for="{{ form.caption.id_for_label }}">Caption:</label>
+      {{ form.caption }}
+      {% if form.caption.errors %}
+        <div class="text-danger">{{ form.caption.errors }}</div>
+      {% endif %}
+    </div>
+
+    <!-- Buttons -->
+    <div class="form-actions">
+      <button type="submit" class="auth-btn">🚀 Share Post</button>
+      <a href="{% url 'home_feed' %}" class="new-post-btn">❌ Cancel</a>
+    </div>
+  </form>
+</article>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const photoInput = document.getElementById('{{ form.photo.id_for_label }}');
+    const previewImg = document.getElementById('upload-preview-img');
+    
+    photoInput.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          previewImg.src = e.target.result;
+        }
+        
+        reader.readAsDataURL(this.files[0]);
+      }
+    });
+  });
+</script>
+{% endblock %}

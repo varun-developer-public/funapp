@@ -1,0 +1,49 @@
+{% extends "post/home.html" %}
+{% load static %}
+
+{% block title %}Login - FunApp{% endblock %}
+
+{% block content %}
+<div class="login-box post-card">
+    <div class="post-header" style="justify-content: center;">
+        <img src="{% static 'post/images/default-avatar.svg' %}" alt="Avatar" class="user-avatar" style="width: 80px; height: 80px;">
+    </div>
+    
+    <h2 class="login-title">Welcome to FunApp</h2>
+    
+    <form method="post" class="login-form">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="text-danger" style="margin-bottom: 1rem;">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+        
+        <div class="form-group">
+            <div class="input-with-icon">
+                <span class="input-icon">👤</span>
+                {{ form.username }}
+            </div>
+            {% if form.username.errors %}
+                <div class="text-danger">{{ form.username.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <div class="input-with-icon">
+                <span class="input-icon">🔒</span>
+                {{ form.password }}
+            </div>
+            {% if form.password.errors %}
+                <div class="text-danger">{{ form.password.errors }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="auth-btn login-btn">Sign In</button>
+    </form>
+
+    <p>
+        Don't have an account? <a href="#">Sign up</a>
+    </p>
+</div>
+{% endblock %}
