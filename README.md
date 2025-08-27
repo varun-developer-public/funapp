@@ -1,6 +1,6 @@
 # FunApp Project
 
-This repository contains the source code for the **Test Project** website.
+This repository contains the source code for the **FunApp Project** website.
 
 ## Features
 
@@ -11,11 +11,11 @@ This repository contains the source code for the **Test Project** website.
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/your-username/test.git
+    git clone https://github.com/varun-developer-public/funapp.git
     ```
 2. Open the project folder:
     ```bash
-    cd test
+    cd funapp
     ```
 3. Follow your preferred setup instructions.
 
